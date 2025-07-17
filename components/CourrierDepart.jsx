@@ -4,7 +4,6 @@ import MailTable from './MailTable';
 import CourrierDetailModal from './CourrierDetailModal';
 import { useToast } from './ToastContext';
 import { useCourrierStorage } from '../hooks/useCourrierStorage';
-import { useCourrierStorage } from '../hooks/useCourrierStorage';
 import AddCourierButton from './AddCourierButton';
 
 export default function CourrierDepart() {
