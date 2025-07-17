@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { FiSearch, FiMail, FiEye, FiEdit2, FiTrash2, FiInbox, FiCircle, FiMoreHorizontal } from 'react-icons/fi';
+import StatusBadge from './StatusBadge';
 
 const STATUS_COLORS = {
   'en cours': 'bg-yellow-500/20 text-yellow-400',
@@ -38,7 +39,7 @@ export default function MailTable({
   setSearch, 
   onView, 
   onEdit, 
-  onStatusUpdate,
+  onStatusUpdate, 
   lastAddedId,
   isProgressiveLoad
 }) {
@@ -216,10 +217,18 @@ export default function MailTable({
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap border-r border-gray-600">{safeString(mail.canal || mail.channel)}</td>
                       <td className="px-4 py-3 whitespace-nowrap border-r border-gray-600">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusClass(mail.statut || mail.status)}`}>
-                          <FiCircle className="mr-1.5 h-2 w-2" />
-                          {safeString(mail.statut || mail.status)}
-                        </span>
+                        {onStatusUpdate ? (
+                          <StatusBadge
+                            status={mail.statut || mail.status}
+                            onStatusChange={(newStatus) => onStatusUpdate(mail.id, newStatus)}
+                            size="sm"
+                          />
+                        ) : (
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusClass(mail.statut || mail.status)}`}>
+                            <FiCircle className="mr-1.5 h-2 w-2" />
+                            {safeString(mail.statut || mail.status)}
+                          </span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex justify-center gap-1">
@@ -304,7 +313,15 @@ export default function MailTable({
                     )}
                   </div>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs ${getStatusClass(mail.statut || mail.status)}`}>
-                    {safeString(mail.statut || mail.status)}
+                    {onStatusUpdate ? (
+                      <StatusBadge
+                        status={mail.statut || mail.status}
+                        onStatusChange={(newStatus) => onStatusUpdate(mail.id, newStatus)}
+                        size="sm"
+                      />
+                    ) : (
+                      safeString(mail.statut || mail.status)
+                    )}
                   </span>
                 </div>
 
