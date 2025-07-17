@@ -1,0 +1,17 @@
+{
+  "name": "NBH Mail System",
+  "short_name": "NBHMail",
+  "description": "Système moderne de gestion de courriers inspiré de lePremier.net.",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#18181b",
+  "theme_color": "#2563eb",
+  "orientation": "portrait"
+}

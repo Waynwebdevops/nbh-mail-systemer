@@ -1,0 +1,20 @@
+[
+  {
+    "numero": "ARR-00001",
+    "dateReception": "2025-07-17T16:30",
+    "dateSignature": "2025-07-17T16:30",
+    "expediteur": "Association X",
+    "destinataire": "Association X",
+    "objet": "lkhb",
+    "canal": "Physique",
+    "reference": "kjhb",
+    "delai": "2025-07-17",
+    "statut": "En cours",
+    "observations": "lkjb",
+    "type": "ARRIVE",
+    "fichiers": "[]",
+    "id": 1752766257628,
+    "createdAt": "2025-07-17T15:30:57.628Z",
+    "updatedAt": "2025-07-17T15:30:57.629Z"
+  }
+]

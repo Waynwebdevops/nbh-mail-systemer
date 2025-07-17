@@ -1,0 +1,68 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+body {
+  font-family: 'Inter', 'Geist', 'Geist Mono', 'sans-serif';
+  background-color: #F7F8FA !important;
+  color: #18181b !important;
+}
+
+/* Thème clair uniquement */
+:root {
+  --bg-main: #F7F8FA;
+  --bg-surface: #FCFCFC;
+  --text-main: #18181b;
+  --text-secondary: #374151;
+  --border-main: #e5e7eb;
+  --primary: #15514f;
+}
+
+.bg-main { background-color: var(--bg-main) !important; }
+.bg-surface { background-color: var(--bg-surface) !important; }
+.text-main { color: var(--text-main) !important; }
+.text-secondary { color: var(--text-secondary) !important; }
+.border-main { border-color: var(--border-main) !important; }
+.text-primary { color: var(--primary) !important; }
+.bg-primary { background-color: var(--primary) !important; }
+
+/* Styles pour les cartes avec effet d'ombre */
+.shadow-card {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.shadow-card-hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Animation pour l'échelle */
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
