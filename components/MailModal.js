@@ -1,6 +1,7 @@
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import FileUpload from './FileUpload';
 import { useEffect, useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
@@ -145,9 +146,10 @@ export function MailModalForm({ mail, onClose, onSave }) {
  * @param {Object} props
  * @param {Object} props.mail - Données du courrier à afficher
  * @param {Function} props.onClose - Fonction de fermeture
- * @param {Function} props.onStatusUpdate - Fonction de mise à jour du statut
+ * @param {Function} props.updateMail - Fonction de mise à jour complète du courrier
+ * @param {Function} props.updateStatus - Fonction de mise à jour du statut uniquement
  */
-export function MailModalDetail({ mail, onClose, onStatusUpdate }) {
+export function MailModalDetail({ mail, onClose, updateMail, updateStatus }) {
   const [currentStatus, setCurrentStatus] = useState(mail?.statut || mail?.status || '');
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -162,12 +164,14 @@ export function MailModalDetail({ mail, onClose, onStatusUpdate }) {
     'nouveau'
   ];
 
-  const handleStatusChange = async (newStatus) => {
-    if (newStatus === currentStatus || !onStatusUpdate) return;
+  const handleStatusChange = async (e) => {
+    const newStatus = e.target.value;
+    if (newStatus === currentStatus) return;
     
     setIsUpdating(true);
     try {
-      await onStatusUpdate(mail.id, { statut: newStatus });
+      if (updateStatus) await updateStatus(mail.id, newStatus);
+      else if (updateMail) await updateMail(mail.id, { ...mail, statut: newStatus });
       setCurrentStatus(newStatus);
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut:', error);
@@ -235,9 +239,9 @@ export function MailModalDetail({ mail, onClose, onStatusUpdate }) {
               <span className="font-semibold text-gray-300 block mb-2">Statut :</span>
               <select
                 value={currentStatus}
-                onChange={(e) => handleStatusChange(e.target.value)}
+                onChange={handleStatusChange}
                 disabled={isUpdating}
-                className="w-full bg-gray-800 text-gray-100 rounded-lg px-3 py-2 border border-gray-600 focus:border-primary focus:ring-1 focus:ring-primary transition disabled:opacity-50"
+                className="w-full bg-gray-800 text-gray-100 rounded-lg px-3 py-2 border border-gray-600 focus:border-primary focus:ring-1 focus:ring-primary transition disabled:opacity-50 cursor-pointer hover:bg-gray-700"
               >
                 {statusOptions.map(status => (
                   <option key={status} value={status}>

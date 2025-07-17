@@ -224,7 +224,7 @@ export default function MailTable({
                       <td className="px-4 py-3">
                         <div className="flex justify-center gap-1">
                           <button 
-                            onClick={() => onView?.(mail, onStatusUpdate)}
+                            onClick={() => onView?.(mail)}
                             className="p-1.5 hover:bg-gray-700/50 rounded transition"
                             title="Voir"
                           >
@@ -320,7 +320,7 @@ export default function MailTable({
                 </div>
 
                 <div className="flex justify-end gap-2 mt-3">
-                  <button onClick={() => onView?.(mail, onStatusUpdate)} className="p-1.5 text-blue-400">
+                  <button onClick={() => onView?.(mail)} className="p-1.5 text-blue-400">
                     <FiEye className="w-4 h-4" />
                   </button>
                   <button onClick={() => onEdit?.(mail)} className="p-1.5 text-yellow-400">

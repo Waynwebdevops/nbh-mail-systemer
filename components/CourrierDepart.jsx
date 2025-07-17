@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import CourrierForm from './CourrierForm.jsx';
 import MailTable from './MailTable';
+import { MailModalDetail } from './MailModal';
 import { useToast } from './ToastContext';
 import AddCourierButton from './AddCourierButton';
 
@@ -212,75 +213,82 @@ export default function CourrierDepart() {
   const [selectedMail, setSelectedMail] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [lastAddedId, setLastAddedId] = useState(null);
+  const [localMails, setLocalMails] = useState([]);
 
-  // Charger tous les courriers départs
+  // Charger les courriers depuis localStorage au démarrage
   useEffect(() => {
-    fetch('/api/courrier-depart')
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-        console.log('Données reçues:', data);
-        setMails(Array.isArray(data) ? data : []);
-      })
-      .catch(error => {
-        console.error('Erreur lors du chargement:', error);
-        setMails([]); // S'assurer que mails est un tableau vide en cas d'erreur
-        addToast("Erreur lors du chargement des courriers", "error");
-      });
-  }, [addToast]);
-
-  // Ajouter un courrier
-  const handleAddMail = async (mail) => {
-    try {
-      const formData = new FormData();
-
-      // Ajouter tous les champs du formulaire
-      Object.entries(mail).forEach(([key, value]) => {
-        if (key === 'files' && Array.isArray(value)) {
-          value.forEach(file => {
-            if (file instanceof File) {
-              formData.append('files', file);
-            }
-          });
-        } else {
-          formData.append(key, value || '');
-        }
-      });
-
-      const res = await fetch('/api/courrier-depart', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!res.ok) {
-        throw new Error('Erreur lors de l\'enregistrement');
+    const savedMails = localStorage.getItem('nbh_courriers_depart');
+    if (savedMails) {
+      try {
+        const parsedMails = JSON.parse(savedMails);
+        setLocalMails(parsedMails);
+      } catch (error) {
+        console.error('Erreur lors du chargement des courriers:', error);
+        setLocalMails([]);
       }
-
-      const newMail = await res.json();
-      setMails(mails => [newMail, ...mails]);
-      setLastAddedId(newMail.id);
-      setShowForm(false);
-      addToast('Nouveau courrier ajouté avec succès !', 'success');
-    } catch (err) {
-      console.error('Erreur ajout courrier:', err);
-      addToast("Erreur lors de l'enregistrement du courrier", 'error');
     }
-  };
+  }, []);
 
-  // Supprimer un courrier
-  const handleRemove = async (id) => {
+  // Sauvegarder dans localStorage à chaque modification
+  const saveToLocalStorage = (mailsToSave) => {
     try {
-      await fetch(`/api/courrier-depart?id=${id}`, { method: 'DELETE' });
-      setMails(mails => mails.filter(mail => mail.id !== id));
-      addToast('Courrier supprimé.', 'success');
-    } catch (err) {
-      addToast("Erreur lors de la suppression", 'error');
+      localStorage.setItem('nbh_courriers_depart', JSON.stringify(mailsToSave));
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
     }
   };
+
+  // Ajouter un courrier avec persistance
+  const handleAddMail = async (mail) => {
+    const newMail = { 
+      ...mail, 
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    const updatedMails = [newMail, ...localMails];
+    setLocalMails(updatedMails);
+    saveToLocalStorage(updatedMails);
+    setLastAddedId(newMail.id);
+    setShowForm(false);
+    addToast('Nouveau courrier ajouté avec succès !', 'success');
+  };
+
+  // Supprimer un courrier avec persistance
+  const handleRemove = (id) => {
+    const updatedMails = localMails.filter(mail => mail.id !== id);
+    setLocalMails(updatedMails);
+    saveToLocalStorage(updatedMails);
+    addToast('Courrier supprimé.', 'success');
+  };
+
+  // Mettre à jour un courrier avec persistance
+  const handleUpdateMail = (updatedMail) => {
+    const mailWithTimestamp = {
+      ...updatedMail,
+      updatedAt: new Date().toISOString()
+    };
+    const updatedMails = localMails.map(mail => 
+      mail.id === updatedMail.id ? mailWithTimestamp : mail
+    );
+    setLocalMails(updatedMails);
+    saveToLocalStorage(updatedMails);
+    addToast('Courrier modifié.', 'success');
+    handleCloseModal();
+  };
+
+  // Mettre à jour uniquement le statut
+  const handleUpdateStatus = async (id, newStatus) => {
+    const updatedMails = localMails.map(mail => 
+      mail.id === id 
+        ? { ...mail, statut: newStatus, updatedAt: new Date().toISOString() }
+        : mail
+    );
+    setLocalMails(updatedMails);
+    saveToLocalStorage(updatedMails);
+    addToast('Statut mis à jour.', 'success');
+    }
 
   const handleView = (mail) => {
     setSelectedMail(mail);
@@ -297,13 +305,8 @@ export default function CourrierDepart() {
     setModalType(null);
   };
 
-  const handleUpdateMail = (updatedMail) => {
-    setMails(mails => mails.map(mail => mail.id === updatedMail.id ? updatedMail : mail));
-    addToast('Courrier modifié.', 'success');
-    handleCloseModal();
-  };
-
-  const filteredMails = (Array.isArray(mails) ? mails : []).filter(mail => {
+  // Utiliser localMails au lieu de mails pour le filtrage
+  const filteredMails = localMails.filter(mail => {
     const q = search.toLowerCase();
     return (
       (mail.objet || '').toLowerCase().includes(q) ||
@@ -363,7 +366,12 @@ export default function CourrierDepart() {
 
       {/* Modales */}
       {modalType === 'view' && selectedMail && (
-        <MailDetailModal mail={selectedMail} onClose={handleCloseModal} />
+        <MailModalDetail 
+          mail={selectedMail} 
+          onClose={handleCloseModal}
+          updateMail={handleUpdateMail}
+          updateStatus={handleUpdateStatus}
+        />
       )}
 
       {modalType === 'edit' && selectedMail && (

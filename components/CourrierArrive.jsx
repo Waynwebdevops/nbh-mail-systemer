@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import CourrierForm from './CourrierForm.jsx';
 import MailTable from './MailTable';
+import { MailModalDetail } from './MailModal';
 import { useToast } from './ToastContext';
 
 function MailDetailModal({ mail, onClose }) {
@@ -205,19 +206,53 @@ export default function CourrierArrive() {
   const [selectedMail, setSelectedMail] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [lastAddedId, setLastAddedId] = useState(null);
+  const [localMails, setLocalMails] = useState([]);
 
-  // Ajouter un courrier
+  // Charger les courriers depuis localStorage au démarrage
+  useEffect(() => {
+    const savedMails = localStorage.getItem('nbh_courriers_arrive');
+    if (savedMails) {
+      try {
+        const parsedMails = JSON.parse(savedMails);
+        setLocalMails(parsedMails);
+      } catch (error) {
+        console.error('Erreur lors du chargement des courriers:', error);
+        setLocalMails([]);
+      }
+    }
+  }, []);
+
+  // Sauvegarder dans localStorage à chaque modification
+  const saveToLocalStorage = (mailsToSave) => {
+    try {
+      localStorage.setItem('nbh_courriers_arrive', JSON.stringify(mailsToSave));
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
+    }
+  };
+
+  // Ajouter un courrier avec persistance
   const handleAddMail = (mail) => {
-    const newMail = { ...mail, id: Date.now() };
-    setMails(mails => [newMail, ...mails]);
+    const newMail = { 
+      ...mail, 
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    const updatedMails = [newMail, ...localMails];
+    setLocalMails(updatedMails);
+    saveToLocalStorage(updatedMails);
     setLastAddedId(newMail.id);
     setShowForm(false);
     addToast('Nouveau courrier ajouté !', 'success');
   };
 
-  // Supprimer un courrier
+  // Supprimer un courrier avec persistance
   const handleRemove = (id) => {
-    setMails(mails => mails.filter(mail => mail.id !== id));
+    const updatedMails = localMails.filter(mail => mail.id !== id);
+    setLocalMails(updatedMails);
+    saveToLocalStorage(updatedMails);
     addToast('Courrier supprimé.', 'success');
   };
 
@@ -236,13 +271,35 @@ export default function CourrierArrive() {
     setModalType(null);
   };
 
+  // Mettre à jour un courrier avec persistance
   const handleUpdateMail = (updatedMail) => {
-    setMails(mails => mails.map(mail => mail.id === updatedMail.id ? updatedMail : mail));
+    const mailWithTimestamp = {
+      ...updatedMail,
+      updatedAt: new Date().toISOString()
+    };
+    const updatedMails = localMails.map(mail => 
+      mail.id === updatedMail.id ? mailWithTimestamp : mail
+    );
+    setLocalMails(updatedMails);
+    saveToLocalStorage(updatedMails);
     addToast('Courrier modifié.', 'success');
     handleCloseModal();
   };
 
-  const filteredMails = mails.filter(mail => {
+  // Mettre à jour uniquement le statut
+  const handleUpdateStatus = async (id, newStatus) => {
+    const updatedMails = localMails.map(mail => 
+      mail.id === id 
+        ? { ...mail, statut: newStatus, updatedAt: new Date().toISOString() }
+        : mail
+    );
+    setLocalMails(updatedMails);
+    saveToLocalStorage(updatedMails);
+    addToast('Courrier modifié.', 'success');
+  };
+
+  // Utiliser localMails au lieu de mails pour le filtrage
+  const filteredMails = localMails.filter(mail => {
     const q = search.toLowerCase();
     return (
       (mail.objet || '').toLowerCase().includes(q) ||
@@ -308,7 +365,12 @@ export default function CourrierArrive() {
 
       {/* Modal vue */}
       {modalType === 'view' && selectedMail && (
-        <MailDetailModal mail={selectedMail} onClose={handleCloseModal} />
+        <MailModalDetail 
+          mail={selectedMail} 
+          onClose={handleCloseModal}
+          updateMail={handleUpdateMail}
+          updateStatus={handleUpdateStatus}
+        />
       )}
 
       {/* Modal édition */}
