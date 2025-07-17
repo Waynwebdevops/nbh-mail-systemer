@@ -72,24 +72,30 @@ export function MailModalForm({ mail, onClose, onSave }) {
               <label htmlFor="date" className="block mb-1 text-sm">Date de réception</label>
               <input id="date" type="date" {...register('date')} className="w-full bg-muted/30 text-gray-100 rounded px-3 py-2" aria-required="true" />
               {errors.date && <p className="text-red-400 text-xs mt-1" role="alert">{errors.date.message}</p>}
+              }
             </div>
             <div>
               <label htmlFor="time" className="block mb-1 text-sm">Heure</label>
               <input id="time" type="time" {...register('time')} className="w-full bg-muted/30 text-gray-100 rounded px-3 py-2" aria-required="true" />
               {errors.time && <p className="text-red-400 text-xs mt-1" role="alert">{errors.time.message}</p>}
+              }
             </div>
             <div>
               <label htmlFor="expediteur" className="block mb-1 text-sm">Expéditeur (Partenaire)</label>
               <select id="expediteur" {...register('expediteur')} className="w-full bg-muted/30 text-gray-100 rounded px-3 py-2" aria-required="true">
                 <option value="">Sélectionner</option>
                 {PARTENAIRES.map(p => <option key={p}>{p}</option>)}
+                )
+                }
               </select>
               {errors.expediteur && <p className="text-red-400 text-xs mt-1" role="alert">{errors.expediteur.message}</p>}
+              }
             </div>
             <div className="md:col-span-2">
               <label htmlFor="objet" className="block mb-1 text-sm">Objet du courrier</label>
               <input id="objet" {...register('objet')} className="w-full bg-muted/30 text-gray-100 rounded px-3 py-2" aria-required="true" />
               {errors.objet && <p className="text-red-400 text-xs mt-1" role="alert">{errors.objet.message}</p>}
+              }
             </div>
             <div>
               <label htmlFor="canal" className="block mb-1 text-sm">Canal de réception</label>
@@ -114,8 +120,11 @@ export function MailModalForm({ mail, onClose, onSave }) {
               <select id="destinataire" {...register('destinataire')} className="w-full bg-muted/30 text-gray-100 rounded px-3 py-2" aria-required="true">
                 <option value="">Sélectionner</option>
                 {DESTINATAIRES.map(d => <option key={d}>{d}</option>)}
+                )
+                }
               </select>
               {errors.destinataire && <p className="text-red-400 text-xs mt-1" role="alert">{errors.destinataire.message}</p>}
+              }
             </div>
             <div>
               <label htmlFor="statut" className="block mb-1 text-sm">Statut de traitement</label>
