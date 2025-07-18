@@ -51,11 +51,13 @@ export default function Register() {
           <label htmlFor="register-email" className="block mb-1 text-gray-300">Email</label>
           <input id="register-email" type="email" {...register('email')} className="w-full p-2 rounded-lg bg-muted/30 text-gray-100 focus:ring-2 focus:ring-primary outline-none" aria-required="true" aria-invalid={!!errors.email} aria-describedby={errors.email ? 'register-email-error' : undefined} />
           {errors.email && <p id="register-email-error" className="text-red-400 text-xs mt-1" role="alert">{errors.email.message}</p>}
+          }
         </div>
         <div className="mb-4">
           <label htmlFor="register-password" className="block mb-1 text-gray-300">Mot de passe</label>
           <input id="register-password" type="password" {...register('password')} className="w-full p-2 rounded-lg bg-muted/30 text-gray-100 focus:ring-2 focus:ring-primary outline-none" aria-required="true" aria-invalid={!!errors.password} aria-describedby={errors.password ? 'register-password-error' : undefined} />
           {errors.password && <p id="register-password-error" className="text-red-400 text-xs mt-1" role="alert">{errors.password.message}</p>}
+          }
         </div>
         <div className="mb-4">
           <label htmlFor="register-role" className="block mb-1 text-gray-300">Rôle</label>
@@ -66,8 +68,10 @@ export default function Register() {
             ))}
           </select>
           {errors.role && <p id="register-role-error" className="text-red-400 text-xs mt-1" role="alert">{errors.role.message}</p>}
+          }
         </div>
         {error && <p className="text-red-400 text-center mb-2 text-sm animate-pulse" role="alert">{error}</p>}
+        }
         <Button type="submit" className="w-full bg-primary hover:bg-primary/80 text-white font-semibold py-2 rounded-lg transition shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">{t('register')}</Button>
         <button type="submit" className="w-full bg-primary hover:bg-primary/80 text-white font-semibold py-2 rounded-lg transition shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Créer un compte</button>
         <p className="mt-4 text-center text-sm text-gray-400">
