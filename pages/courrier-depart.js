@@ -3,8 +3,10 @@ import { useState, useRef, useEffect } from 'react';
 import CourrierForm from '../components/CourrierForm.jsx';
 import MailTable from '../components/MailTable';
 import CourrierDetailModal from '../components/CourrierDetailModal';
-import { useToast } from '../components/ToastContext';
+import { useToast } from '../components/ToastContainer';
 import { useCourrierStorage } from '../hooks/useCourrierStorage';
+import LoadingSpinner from '../components/LoadingSpinner';
+
 export default function CourrierDepart() {
   const [showForm, setShowForm] = useState(false);
   const formRef = useRef(null);
@@ -25,15 +27,38 @@ export default function CourrierDepart() {
   } = useCourrierStorage('DEPART');
 
   const handleAddMail = (mail) => {
-    const newMail = addCourrier(mail);
-    setLastAddedId(newMail.id);
-    setShowForm(false);
-    addToast('Nouveau courrier ajouté avec succès !', 'success');
+    try {
+      const newMail = addCourrier(mail);
+      setLastAddedId(newMail.id);
+      setShowForm(false);
+      addToast('📤 Courrier départ enregistré avec succès !', 'success');
+      
+      // Scroll vers le nouveau courrier
+      setTimeout(() => {
+        const newRow = document.querySelector(`[data-courrier-id="${newMail.id}"]`);
+        if (newRow) {
+          newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          newRow.classList.add('animate-pulse');
+          setTimeout(() => newRow.classList.remove('animate-pulse'), 2000);
+        }
+      }, 100);
+      
+      return newMail;
+    } catch (error) {
+      addToast('❌ Erreur lors de l\'enregistrement du courrier', 'error');
+      throw error;
+    }
   };
 
   const handleRemove = (id) => {
-    deleteCourrier(id);
-    addToast('Courrier supprimé.', 'success');
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce courrier ?')) {
+      try {
+        deleteCourrier(id);
+        addToast('🗑️ Courrier supprimé avec succès', 'success');
+      } catch (error) {
+        addToast('❌ Erreur lors de la suppression', 'error');
+      }
+    }
   };
 
   const handleView = (mail) => {
@@ -52,13 +77,24 @@ export default function CourrierDepart() {
   };
 
   const handleStatusUpdate = async (id, newStatus) => {
-    updateStatus(id, newStatus);
-    addToast('Statut mis à jour avec succès', 'success');
+    try {
+      const updatedCourrier = updateStatus(id, newStatus);
+      if (updatedCourrier) {
+        addToast(`📋 Statut mis à jour : ${newStatus}`, 'success');
+      }
+    } catch (error) {
+      addToast('❌ Erreur lors de la mise à jour du statut', 'error');
+    }
   };
 
   const handleUpdateMail = (updatedMail) => {
-    addToast('Courrier modifié.', 'success');
-    handleCloseModal();
+    try {
+      updateCourrier(updatedMail.id, updatedMail);
+      addToast('✏️ Courrier modifié avec succès', 'success');
+      handleCloseModal();
+    } catch (error) {
+      addToast('❌ Erreur lors de la modification', 'error');
+    }
   };
 
   const filteredMails = mails.filter(mail => {
@@ -71,8 +107,12 @@ export default function CourrierDepart() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-lg">Chargement des courriers...</div>
+      <div className="flex items-center justify-center h-screen bg-main">
+        <LoadingSpinner 
+          size="lg" 
+          text="Chargement des courriers départ..." 
+          color="primary"
+        />
       </div>
     );
   }

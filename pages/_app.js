@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 import { AuthProvider } from '../components/AuthProvider';
-import { ToastProvider } from '../components/ToastContext';
+import { ToastProvider } from '../components/ToastContainer';
 import { MailProvider } from '../components/MailContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/router';

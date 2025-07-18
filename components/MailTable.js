@@ -188,7 +188,13 @@ export default function MailTable({
                   const shouldTruncate = objetText.length > 15;
 
                   return (
-                    <tr key={mail.id} className="hover:bg-gray-800/30 border-b border-gray-700 animate-fadeIn">
+                    <tr 
+                      key={mail.id} 
+                      data-courrier-id={mail.id}
+                      className={`hover:bg-gray-800/30 border-b border-gray-700 animate-fadeIn transition-all duration-300 ${
+                        lastAddedId === mail.id ? 'bg-green-100/20 border-green-400' : ''
+                      }`}
+                    >
                       <td className="px-4 py-3 whitespace-nowrap border-r border-gray-600">{safeString(mail.numero)}</td>
                       <td className="px-4 py-3 whitespace-nowrap border-r border-gray-600">{formatDate(mail.dateReception || mail.date)}</td>
                       <td className="px-4 py-3 whitespace-nowrap truncate max-w-[180px] border-r border-gray-600">{safeString(mail.expediteur || mail.sender)}</td>

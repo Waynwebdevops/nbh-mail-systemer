@@ -108,6 +108,51 @@ export default function CourrierForm({ type = 'ARRIVE', onClose, onAddMail, init
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation des champs obligatoires
+    if (!objet || !dateReception) {
+      addToast('Merci de remplir tous les champs obligatoires.', 'error');
+      return;
+    }
+
+    if (!expediteur || !destinataire) {
+      addToast('Merci de remplir l\'expéditeur et le destinataire.', 'error');
+      return;
+    }
+
+    try {
+      // Préparer les données du courrier
+      const courrierData = {
+        numero: initialValues?.numero || numero,
+        dateReception,
+        dateSignature: dateSignature || null,
+        expediteur,
+        destinataire,
+        objet,
+        canal,
+        reference,
+        delai,
+        statut,
+        observations,
+        files,
+        type
+      };
+
+      // Appeler la fonction de sauvegarde
+      const result = await onAddMail(courrierData);
+      
+      // Fermer le formulaire
+      onClose();
+      
+      // Message de succès géré par le composant parent
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement :", error);
+      addToast("Erreur lors de l'enregistrement du courrier", 'error');
+    }
+  };
+
+  const handleSubmitOld = async (e) => {
+    e.preventDefault();
+
     const formData = new FormData();
     formData.append('numero', numero);
     formData.append('dateReception', dateReception);

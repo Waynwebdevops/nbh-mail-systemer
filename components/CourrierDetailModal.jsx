@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import StatusBadge from './StatusBadge';
+import { useToast } from './ToastContainer';
 
 export default function CourrierDetailModal({ 
   courrier, 
@@ -8,6 +9,7 @@ export default function CourrierDetailModal({
   type = 'ARRIVE' 
 }) {
   const [isUpdating, setIsUpdating] = useState(false);
+  const { addToast } = useToast();
 
   if (!courrier) return null;
 
@@ -28,8 +30,10 @@ export default function CourrierDetailModal({
     setIsUpdating(true);
     try {
       await onStatusUpdate(courrier.id, newStatus);
+      addToast(`✅ Statut mis à jour : ${newStatus}`, 'success');
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut:', error);
+      addToast('❌ Erreur lors de la mise à jour du statut', 'error');
       throw error;
     } finally {
       setIsUpdating(false);
