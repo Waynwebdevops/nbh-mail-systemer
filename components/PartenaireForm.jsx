@@ -9,7 +9,7 @@ export default function PartenaireForm({ onAdd, editingPartenaire, onUpdate, onC
   const [message, setMessage] = useState('');
 
   // Mettre à jour le formulaire quand on édite un partenaire
-  useState(() => {
+  useEffect(() => {
     if (editingPartenaire) {
       setForm({
         nom: editingPartenaire.nom || '',
@@ -72,11 +72,6 @@ export default function PartenaireForm({ onAdd, editingPartenaire, onUpdate, onC
         <button type="submit" className="flex-1 bg-[#15514f] hover:bg-[#0f3e3c] text-white font-semibold py-3 px-6 rounded-lg transition shadow-md min-h-[48px]">
           {editingPartenaire ? t('update') : t('save')}
         </button>
-        ) : (
-          <button type="button" className="w-full bg-[#e6e6e6] hover:bg-[#d0d0d0] text-gray-800 font-semibold py-3 px-6 rounded-lg transition shadow-md min-h-[48px]" onClick={() => setForm({ nom: '', type: 'Public', email: '' })}>
-            {t('reset')}
-          </button>
-        )}
       </div>
       {message && (
         <div className={`mt-2 text-center text-sm text-green-400 animate-fade-in`}>{message}</div>

@@ -3,7 +3,6 @@ import CourrierForm from './CourrierForm.jsx';
 import MailTable from './MailTable';
 import CourrierDetailModal from './CourrierDetailModal';
 import { useToast } from './ToastContainer';
-import { useCourrierStorage } from '../hooks/useCourrierStorage';
 
 export default function CourrierArrive() {
   const [showForm, setShowForm] = useState(false);

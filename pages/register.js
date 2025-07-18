@@ -69,6 +69,7 @@ export default function Register() {
         </div>
         {error && <p className="text-red-400 text-center mb-2 text-sm animate-pulse" role="alert">{error}</p>}
         <Button type="submit" className="w-full bg-primary hover:bg-primary/80 text-white font-semibold py-2 rounded-lg transition shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">{t('register')}</Button>
+        <button type="submit" className="w-full bg-primary hover:bg-primary/80 text-white font-semibold py-2 rounded-lg transition shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">Créer un compte</button>
         <p className="mt-4 text-center text-sm text-gray-400">
           Déjà inscrit ? <Link href="/login" className="text-blue-400 underline">Se connecter</Link>
         </p>
